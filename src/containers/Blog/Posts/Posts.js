@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import axios from '../../../axios';
+import { Link } from 'react-router-dom';
 import Post from '../../../components/Post/Post';
 import './Posts.css';
+import FullPost from  '../FullPost/FullPost';
 
 class Posts extends Component {
   state = {
@@ -12,7 +14,7 @@ class Posts extends Component {
 
   componentDidMount() {
     console.log(this.props)
-    
+
     axios.get('/posts')
     .then(response => {
       const posts = response.data.slice(0, 4);
@@ -39,12 +41,13 @@ class Posts extends Component {
     let posts = <p style={{textAlign: 'center'}}>Something went wrong!</p>
     if (!this.state.error) {
      posts = this.state.posts.map(post => {
-      return <Post 
-        key={post.id} 
-        title={post.title} 
-        author={post.author} 
-        clicked={() => this.postSelectedHandler(post.id)}
-        />;
+      return (
+        <Link to={'/' + post.id} key={post.id} > {/* key should now be in Link because wen were mapping the outer div should have the key */}
+          <Post 
+          title={post.title} 
+          author={post.author} 
+          clicked={() => this.postSelectedHandler(post.id)} />
+        </Link>);
       }) 
     }
 
