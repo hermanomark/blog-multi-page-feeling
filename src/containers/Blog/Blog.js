@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from '../../axios'; // you can name this axiosinstance and update the remaining axios within the file
 
 import './Blog.css';
+import Posts from './Posts/Posts';
 
 class Blog extends Component {
 
@@ -16,6 +17,7 @@ class Blog extends Component {
             </ul>
           </nav>
         </header>
+        <Posts />
       </div>
       );
   }

@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import axios from '../../../axios';
+import Post from '../../../components/Post/Post';
+import './Posts.css';
 
 class Posts extends Component {
   state = {
     posts: [],
-    selectedPostId: null,
-    error: false
+    // selectedPostId: null,
+    // error: false
   }
 
   componentDidMount() {
@@ -21,7 +24,7 @@ class Posts extends Component {
               // console.log(response);
             })
     .catch(error => {
-      this.setState({error: true})
+      // this.setState({error: true})
       // console.log(error);
     })
   }
