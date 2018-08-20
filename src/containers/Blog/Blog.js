@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
-import { Route, NavLink, Switch } from 'react-router-dom';
+import { Route, NavLink, Switch, Redirect } from 'react-router-dom';
 import './Blog.css';
 import Posts from './Posts/Posts';
-import NewPost from './NewPost/NewPost';
-import FullPost from './FullPost/FullPost';
+import asyncComponent from '../../hoc/asyncComponent';
+// import NewPost from './NewPost/NewPost'; // omitted for loading routes lazily
+const asyncNewPost = asyncComponent(() => {
+  return import('./NewPost/NewPost'); // this is a dynamic import for hoc
+});
 
 class Blog extends Component {
+
+  state = {
+    auth: true // to test authentication of new post change to false
+  }
 
   render () {
     return (
@@ -14,13 +21,13 @@ class Blog extends Component {
           <nav>
             <ul>
               <li> <NavLink // using navlink you can style the active
-                to="/" 
-                exact // this exact specify the active navlink for home only
+                to="/posts" 
+                 // this exact specify the active navlink for home only
                 activeClassName="my-active" // setting up the class name of active if you don't want the default name
                 activeStyle={{
                   color: 'orange',
                   textDecoration: 'underline' // You can style the active like this
-                }} > Home </NavLink></li>
+                }} > Posts </NavLink></li>
               <li> <NavLink to={{
                 // when making your path with a domain name
                 // example.com/posts/new-post // this is wrong
@@ -44,15 +51,18 @@ class Blog extends Component {
         </header>
         { /*<Route path="/" exact render={() => <Posts/>}/>
          <Route path="/" render={() => <h1 style={{textAlign: 'center'}}>Home 2</h1>} /> */ }
-          <Route path="/" exact component={Posts} />
+          { /* <Route path="/" exact component={Posts} /> move this route back to switch because of nested route */ }
           { /*
            <Route path="/new-post" component={NewPost} />
-          }
           <Route path="posts/:id" exact component={FullPost} /> // you can use path="posts/:id" to render fullpost individually but it would be better if we use Switch
         */ }
         <Switch> { /* you can mix up route in switch doesn't have to be all inside the switch */}
-          <Route path="/new-post" component={NewPost} />
-          <Route path="/:id" exact component={FullPost} /> { /*make sure this is lower then new-post to not make an interferance, the order stil applies in inside Switch*/}
+          { this.state.auth ? <Route path="/new-post" component={asyncNewPost} /> : null } {/* working with guards, for component value should be the asyncNewPost because of lazy routing */}
+          <Route path="/posts" component={Posts} />
+          <Route render={() => <h1 style={{textAlign: "center"}}>Page not found </h1>} /> { /* better solution on handling 404 not found, you can also use other components here if you want, cannot use simultaneously with Redirect */ }
+          { /* <Redirect from="/" to="/posts" /> you can use this to handle 404 not found */ } { /* better solution for redirect */ }
+          { /* <Route path="/" component={Posts} /> using redirect */ }
+          { /*<Route path="/:id" exact component={FullPost} /> moving this path to nested route */ } { /*make sure this is lower then new-post to not make an interferance, the order stil applies in inside Switch*/}
         </Switch>
       </div>
       );

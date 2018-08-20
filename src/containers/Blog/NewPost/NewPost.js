@@ -1,17 +1,19 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-
+import { Redirect } from 'react-router-dom';
 import './NewPost.css';
 
 class NewPost extends Component {
   state = {
     title: '',
     content: '',
-    author: ''
+    author: '',
+    submitted: false
   }
 
   componentDidMount() {
     console.log(this.props)
+    // if unauth => this.props.history.replace("/posts") // alternatve way to redirect user using componentDidMount conditionally
   }
 
   postDataHandler = () => {
@@ -23,10 +25,17 @@ class NewPost extends Component {
     axios.post('/posts', data)
       .then(response => {
         console.log(response);
+       // this.setState({submitted: true});
+       // this.props.history.replace("/posts") // other way to do it but back butto in browser will not work, this is use for other use case
+       this.props.history.push("/posts") // not using Redirect component to redirect the user
       })
   }
 
   render () {
+    let redirect = null;
+    if (this.state.submitted) {
+      return <Redirect to="/posts" />
+    } // this code is now redundant because of this.props.history.push("/posts") but I'll leave it here for reference
     return (
       <div className="NewPost">
         <h1>Add a Post</h1>
